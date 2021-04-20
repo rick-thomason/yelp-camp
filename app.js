@@ -19,17 +19,35 @@ db.once('open', () => {
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
+app.use(express.urlencoded({ extended: true }))
+
+// landing page
 app.get('/', (req, res) => {
   res.render('home')
 })
 
-app.get('/makecampground', async (req, res) => {
-  const camp = new Campground({
-    title: 'My Backyard',
-    description: 'cheap camping',
-  })
-  await camp.save()
-  res.send(camp)
+// shows all campgrounds
+app.get('/campgrounds', async (req, res) => {
+  const campgrounds = await Campground.find({})
+  res.render('campgrounds/index', { campgrounds })
+})
+
+// form to create a new campground
+app.get('/campgrounds/new', async (req, res) => {
+  res.render('campgrounds/new')
+})
+
+// submitting new campground to database
+app.post('/campgrounds', async (req, res) => {
+  const campground = new Campground(req.body.campground)
+  await campground.save()
+  res.redirect(`/campgrounds/${campground._id}`)
+})
+
+// show one individual campground
+app.get('/campgrounds/:id', async (req, res) => {
+  const campground = await Campground.findById(req.params.id)
+  res.render('campgrounds/show', { campground })
 })
 
 app.listen(5000, () => {
