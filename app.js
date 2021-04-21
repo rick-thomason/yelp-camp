@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const path = require('path')
+const ejsMate = require('ejs-mate')
 const methodOverride = require('method-override')
 const mongoose = require('mongoose')
 const Campground = require('./models/campground')
@@ -17,6 +18,7 @@ db.once('open', () => {
   console.log('DATABASE CONNECTED')
 })
 
+app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
@@ -59,6 +61,7 @@ app.get('/campgrounds/:id/edit', async (req, res) => {
   res.render('campgrounds/edit', { campground })
 })
 
+// update campground to database
 app.put('/campgrounds/:id', async (req, res) => {
   const { id } = req.params
   const campground = await Campground.findByIdAndUpdate(id, {
@@ -67,6 +70,7 @@ app.put('/campgrounds/:id', async (req, res) => {
   res.redirect(`/campgrounds/${campground._id}`)
 })
 
+// delete campground from database
 app.delete('/campgrounds/:id', async (req, res) => {
   const { id } = req.params
   await Campground.findByIdAndDelete(id)
