@@ -109,7 +109,7 @@ app.delete(
   catchAsync(async (req, res) => {
     const { id } = req.params
     await Campground.findByIdAndDelete(id)
-    res.redirect(`/campgrounds`)
+    res.redirect('/campgrounds')
   })
 )
 
