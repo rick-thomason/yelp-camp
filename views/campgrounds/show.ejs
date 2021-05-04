@@ -28,7 +28,12 @@
       </div>
     </div>
     <h2>Leave a Review</h2>
-    <form action="" class="mb-3">
+    <form
+      method="POST"
+      action="/campgrounds/<%= campground._id %>/reviews"
+      class="mb-3 validated-form"
+      novalidate
+    >
       <div class="mb-3">
         <label class="form-label" for="rating">Rating</label>
         <input
@@ -48,10 +53,18 @@
           id=""
           cols="30"
           rows="5"
+          required
         ></textarea>
+        <div class="valid-feedback">Looks Good!</div>
       </div>
       <button class="btn btn-success">Submit Review</button>
     </form>
+    <% for(let review of campground.reviews) { %>
+    <div class="mb-3">
+      <p>Rating: <%= review.rating %></p>
+      <p>Review: <%= review.body %></p>
+    </div>
+    <% } %>
   </div>
 </div>
 
