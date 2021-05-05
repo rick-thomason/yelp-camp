@@ -14,6 +14,7 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 })
 
 const db = mongoose.connection
@@ -137,6 +138,17 @@ app.post(
     await review.save()
     await campground.save()
     res.redirect(`/campgrounds/${campground._id}`)
+  })
+)
+
+// delete reviews for campground
+app.delete(
+  '/campgrounds/:id/reviews/:reviewID',
+  catchAsync(async (req, res) => {
+    const { id, reviewID } = req.params
+    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewID } })
+    await Review.findByIdAndDelete(reviewID)
+    res.redirect(`/campgrounds/${id}`)
   })
 )
 
