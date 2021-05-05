@@ -10,6 +10,9 @@ const mongoose = require('mongoose')
 const Campground = require('./models/campground')
 const Review = require('./models/review')
 
+const campgrounds = require('./routes/campgrounds')
+const reviews = require('./routes/reviews')
+
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -30,127 +33,13 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
-const validateCampground = (req, res, next) => {
-  const { error } = campgroundSchema.validate(req.body)
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(',')
-    throw new ExpressError(msg, 400)
-  } else {
-    next()
-  }
-}
-
-const validateReview = (req, res, next) => {
-  const { error } = reviewSchema.validate(req.body)
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(',')
-    throw new ExpressError(msg, 400)
-  } else {
-    next()
-  }
-}
+app.use('/campgrounds', campgrounds)
+app.use('/reviews', reviews)
 
 // landing page
 app.get('/', (req, res) => {
   res.render('home')
 })
-
-// shows all campgrounds
-app.get(
-  '/campgrounds',
-  catchAsync(async (req, res) => {
-    const campgrounds = await Campground.find({})
-    res.render('campgrounds/index', { campgrounds })
-  })
-)
-
-// form to create a new campground
-app.get(
-  '/campgrounds/new',
-  catchAsync(async (req, res) => {
-    res.render('campgrounds/new')
-  })
-)
-
-// submitting new campground to database
-app.post(
-  '/campgrounds',
-  validateCampground,
-  catchAsync(async (req, res, next) => {
-    const campground = new Campground(req.body.campground)
-    await campground.save()
-    res.redirect(`/campgrounds/${campground._id}`)
-  })
-)
-
-// show one individual campground
-app.get(
-  '/campgrounds/:id',
-  catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate(
-      'reviews'
-    )
-    res.render('campgrounds/show', { campground })
-  })
-)
-
-// show edit form for campground
-app.get(
-  '/campgrounds/:id/edit',
-  catchAsync(async (req, res) => {
-    const { id } = req.params
-    const campground = await Campground.findById(id)
-    res.render('campgrounds/edit', { campground })
-  })
-)
-
-// update campground to database
-app.put(
-  '/campgrounds/:id',
-  validateCampground,
-  catchAsync(async (req, res) => {
-    const { id } = req.params
-    const campground = await Campground.findByIdAndUpdate(id, {
-      ...req.body.campground,
-    })
-    res.redirect(`/campgrounds/${campground._id}`)
-  })
-)
-
-// delete campground from database
-app.delete(
-  '/campgrounds/:id',
-  catchAsync(async (req, res) => {
-    const { id } = req.params
-    await Campground.findByIdAndDelete(id)
-    res.redirect('/campgrounds')
-  })
-)
-
-// post review to specific campground
-app.post(
-  '/campgrounds/:id/reviews',
-  validateReview,
-  catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id)
-    const review = new Review(req.body.review)
-    campground.reviews.push(review)
-    await review.save()
-    await campground.save()
-    res.redirect(`/campgrounds/${campground._id}`)
-  })
-)
-
-// delete reviews for campground
-app.delete(
-  '/campgrounds/:id/reviews/:reviewID',
-  catchAsync(async (req, res) => {
-    const { id, reviewID } = req.params
-    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewID } })
-    await Review.findByIdAndDelete(reviewID)
-    res.redirect(`/campgrounds/${id}`)
-  })
-)
 
 app.all('*', (req, res, next) => {
   next(new ExpressError('Page not found!!', 404))
