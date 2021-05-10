@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { campgroundSchema } = require('../schemas')
+const { isLoggedIn } = require('../middleware')
 const catchAsync = require('../utils/catchAsync')
 const ExpressError = require('../utils/ExpressError')
 const Campground = require('../models/campground')
@@ -27,11 +28,8 @@ router.get(
 // form to create a new campground
 router.get(
   '/new',
+  isLoggedIn,
   catchAsync(async (req, res) => {
-    if (!req.isAuthenticated()) {
-      req.flash('error', 'You must be signed in!')
-      return res.redirect('/login')
-    }
     res.render('campgrounds/new')
   })
 )
@@ -40,6 +38,7 @@ router.get(
 router.post(
   '/',
   validateCampground,
+  isLoggedIn,
   catchAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground)
     await campground.save()
@@ -66,6 +65,7 @@ router.get(
 // show edit form for campground
 router.get(
   '/:id/edit',
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
@@ -81,6 +81,7 @@ router.get(
 router.put(
   '/:id',
   validateCampground,
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params
     const campground = await Campground.findByIdAndUpdate(id, {
@@ -94,6 +95,7 @@ router.put(
 // delete campground from database
 router.delete(
   '/:id',
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params
     await Campground.findByIdAndDelete(id)
