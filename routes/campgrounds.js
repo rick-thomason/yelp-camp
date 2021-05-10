@@ -28,6 +28,10 @@ router.get(
 router.get(
   '/new',
   catchAsync(async (req, res) => {
+    if (!req.isAuthenticated()) {
+      req.flash('error', 'You must be signed in!')
+      return res.redirect('/login')
+    }
     res.render('campgrounds/new')
   })
 )
