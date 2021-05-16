@@ -28,10 +28,27 @@ const seedDB = async () => {
       author: '609976d1800a0a1ae0ebea8a',
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
-      image: 'https://source.unsplash.com/collection/483251',
       description:
         'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis autem ducimus iste dolores. Asperiores placeat alias eligendi, distinctio fugit nulla facilis cum impedit iure atque possimus, quam eos inventore sunt aut porro nemo magni, blanditiis dignissimos molestias ab repellat! Natus quis omnis exercitationem labore eius qui debitis praesentium animi optio.',
       price,
+      images: [
+        {
+          url: 'https://res.cloudinary.com/dlsnm0gfp/image/upload/v1621188390/YelpCamp/za7jnbdhyzottk4pgbr2.jpg',
+          filename: 'YelpCamp/za7jnbdhyzottk4pgbr2',
+        },
+        {
+          url: 'https://res.cloudinary.com/dlsnm0gfp/image/upload/v1621188390/YelpCamp/zphcmramwfidnbmaypi8.jpg',
+          filename: 'YelpCamp/zphcmramwfidnbmaypi8',
+        },
+        {
+          url: 'https://res.cloudinary.com/dlsnm0gfp/image/upload/v1621188390/YelpCamp/sakpzpeppzxoalsaioon.jpg',
+          filename: 'YelpCamp/sakpzpeppzxoalsaioon',
+        },
+        {
+          url: 'https://res.cloudinary.com/dlsnm0gfp/image/upload/v1621188390/YelpCamp/wy4xrh667n01udgskalh.jpg',
+          filename: 'YelpCamp/wy4xrh667n01udgskalh',
+        },
+      ],
     })
     await camp.save()
   }
