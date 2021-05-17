@@ -35,13 +35,13 @@ map.on('load', function () {
       'circle-color': [
         'step',
         ['get', 'point_count'],
-        'red',
+        '#29B6F6',
         10,
-        'orange',
+        '#2196F3',
         30,
-        'yellow',
+        '#1976D2',
       ],
-      'circle-radius': ['step', ['get', 'point_count'], 20, 10, 30, 30, 40],
+      'circle-radius': ['step', ['get', 'point_count'], 15, 10, 20, 30, 25],
     },
   })
 
@@ -72,10 +72,10 @@ map.on('load', function () {
 
   // inspect a cluster on click
   map.on('click', 'clusters', function (e) {
-    var features = map.queryRenderedFeatures(e.point, {
+    const features = map.queryRenderedFeatures(e.point, {
       layers: ['clusters'],
     })
-    var clusterId = features[0].properties.cluster_id
+    const clusterId = features[0].properties.cluster_id
     map
       .getSource('campgrounds')
       .getClusterExpansionZoom(clusterId, function (err, zoom) {
@@ -93,15 +93,8 @@ map.on('load', function () {
   // the location of the feature, with
   // description HTML from its properties.
   map.on('click', 'unclustered-point', function (e) {
-    var coordinates = e.features[0].geometry.coordinates.slice()
-    var mag = e.features[0].properties.mag
-    var tsunami
-
-    if (e.features[0].properties.tsunami === 1) {
-      tsunami = 'yes'
-    } else {
-      tsunami = 'no'
-    }
+    const coordinates = e.features[0].geometry.coordinates.slice()
+    const { popUpMarkup } = e.features[0].properties
 
     // Ensure that if the map is zoomed out such that
     // multiple copies of the feature are visible, the
@@ -110,10 +103,7 @@ map.on('load', function () {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
     }
 
-    new mapboxgl.Popup()
-      .setLngLat(coordinates)
-      .setHTML('magnitude: ' + mag + '<br>Was there a tsunami?: ' + tsunami)
-      .addTo(map)
+    new mapboxgl.Popup().setLngLat(coordinates).setHTML(popUpMarkup).addTo(map)
   })
 
   map.on('mouseenter', 'clusters', function () {
