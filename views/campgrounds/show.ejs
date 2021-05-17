@@ -3,6 +3,7 @@
 
 <div class="row">
   <div class="col-6">
+    <div id="map" style="width: 400px; height: 300px"></div>
     <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         <% campground.images.forEach((img, i) => {%>
@@ -73,17 +74,6 @@
       class="mb-3 validated-form"
       novalidate
     >
-      <!-- <div class="mb-3">
-        <label class="form-label" for="rating">Rating</label>
-        <input
-          class="form-range"
-          type="range"
-          min="1"
-          max="5"
-          name="review[rating]"
-          id="rating"
-        />
-      </div> -->
       <div class="mb-3">
         <fieldset class="starability-basic">
           <input
@@ -167,3 +157,13 @@
     <% } %>
   </div>
 </div>
+
+<script>
+  mapboxgl.accessToken = '<%-process.env.MAPBOX_TOKEN%>'
+  const map = new mapboxgl.Map({
+    container: 'map', // container ID
+    style: 'mapbox://styles/mapbox/streets-v11', // style URL
+    center: [-74.5, 40], // starting position [lng, lat]
+    zoom: 4, // starting zoom
+  })
+</script>
