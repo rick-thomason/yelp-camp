@@ -1,11 +1,16 @@
 mapboxgl.accessToken = mapToken
 const map = new mapboxgl.Map({
-  container: 'map', // container ID
-  style: 'mapbox://styles/mapbox/streets-v11', // style URL
-  center: [-74.5, 40], // starting position [lng, lat]
-  zoom: 8, // starting zoom
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v10', // stylesheet location
+  center: campground.geometry.coordinates, // starting position [lng, lat]
+  zoom: 10, // starting zoom
 })
 
-var marker2 = new mapboxgl.Marker({ color: 'aqua', rotation: 45 })
-  .setLngLat([-74.5, 40])
+new mapboxgl.Marker({ color: 'red', rotation: 45 })
+  .setLngLat(campground.geometry.coordinates)
+  .setPopup(
+    new mapboxgl.Popup({ offset: 25 }).setHTML(
+      `<h4>${campground.title}</h4><p>${campground.location}</p>`
+    )
+  )
   .addTo(map)
